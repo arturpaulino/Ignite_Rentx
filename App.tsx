@@ -19,6 +19,7 @@ import {
 
 
 import {Home} from "./src/screens/Home";
+import { CarDetalis } from "./src/screens/CarDetalis";
 
 export default function App() {
   const [fontsLoaded] = useFonts({
@@ -35,7 +36,7 @@ export default function App() {
   return (
     <ThemeProvider theme={theme}>
       <>
-      <Home/>
+      <CarDetalis/>
       </>
     </ThemeProvider>
   );

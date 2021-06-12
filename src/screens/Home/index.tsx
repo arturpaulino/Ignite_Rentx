@@ -3,14 +3,15 @@ import { StatusBar } from "react-native"
 import Logo from ".././../assets/logo.svg"
 import { RFPercentage, RFValue } from 'react-native-responsive-fontsize';
 
+import { Car } from '../../components/Car';
 
 import {
   Container,
   Heard,
   TotalCard,
-  HeardContent
+  HeardContent,
+  CarList
 } from "./styles";
-import { Car } from '../../components/Car';
 
 
 
@@ -43,8 +44,12 @@ export function Home() {
           </TotalCard>
         </HeardContent>
       </Heard>
-      <Car data={carDataOne}/>
-      <Car data={carDataOne}/>
+
+      <CarList
+         data={[1,2,3,4,5]}
+         keyExtractor={ item => String(item)}
+         renderItem={ ({ item }) =>  <Car data={carDataOne}/>
+      }/>
 
     </Container>
   );
