@@ -25,9 +25,14 @@ import peopleSvg from "../../assets/people.svg";
 import { RFValue } from 'react-native-responsive-fontsize';
 import { useTheme } from "styled-components";
 import { Feather} from  "@expo/vector-icons";
-
+import { useNavigation } from "@react-navigation/core";
 export function SchedulingDetalis() {
   const theme = useTheme();
+  const navigation = useNavigation()
+
+  function HandleCarDetalhes() {
+    navigation.navigate('SchedulingComplete')
+  }
 
   return (
     <Container>
@@ -90,7 +95,7 @@ export function SchedulingDetalis() {
       </RentalPrice>
      </Content>
      <Footer>
-         <Button title="Confirmar" />
+         <Button color={theme.colors.success} title="Alugar agora" onPress={HandleCarDetalhes}/>
      </Footer>
 
     </Container>

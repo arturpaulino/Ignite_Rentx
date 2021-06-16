@@ -4,6 +4,7 @@ import {View, Text} from "react-native";
 import AppLoading from "expo-app-loading";
 import {ThemeProvider} from "styled-components";
 import theme from "./src/global/styles/theme";
+import 'react-native-gesture-handler';
 
 import {
   useFonts,
@@ -18,9 +19,8 @@ import {
 } from "@expo-google-fonts/archivo";
 
 
-import {Home} from "./src/screens/Home";
-import { CarDetalis } from "./src/screens/CarDetalis";
-import {SchedulingComplete} from "./src/screens/SchedulingComplete";
+import {Routes} from "./src/routes/";
+
 
 export default function App() {
   const [fontsLoaded] = useFonts({
@@ -37,7 +37,7 @@ export default function App() {
   return (
     <ThemeProvider theme={theme}>
       <>
-      <SchedulingComplete/>
+      <Routes/>
       </>
     </ThemeProvider>
   );

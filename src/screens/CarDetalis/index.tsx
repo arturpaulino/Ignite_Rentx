@@ -13,45 +13,69 @@ import forceSvg from "../../assets/force.svg";
 import gasolineSvg from "../../assets/gasoline.svg";
 import exchangeSvg from "../../assets/exchange.svg";
 import peopleSvg from "../../assets/people.svg";
+import { useNavigation , useRoute } from "@react-navigation/core";
+import { carDTO } from "../../dtos/carDTO";
+import {getAcessorys} from "../../Utils/GetAcessorys"
 
+
+interface Params {
+  car: carDTO;
+}
 
 export function CarDetalis() {
+  const navigation = useNavigation()
+  const route = useRoute();
+
+  const { car } = route.params as Params;
+
+
+  function HandleCarDetalhes() {
+    navigation.navigate('Scheduling')
+  }
+
+  function HandleBack(){
+    navigation.goBack();
+  }
+
   return (
     <Container>
       <Header>
-        <BackButton  onPress={ ()=>{}}/>
+        <BackButton  onPress={HandleBack}/>
       </Header>
       <CarImages>
-       <ImageSlider imageURl={['https://logodownload.org/wp-content/uploads/2016/11/audi-logo.png']}/>
+       <ImageSlider imageURl={car.photos}/>
       </CarImages>
 
     <Content>
       <Details>
         <Description>
-            <Brand>Teste</Brand>
-            <Name>Teste name</Name>
+            <Brand>{car.brand}</Brand>
+            <Name>{car.name}</Name>
         </Description>
         <Rent>
-          <Period>Ao dia</Period>
-          <Price>R$ 60</Price>
+          <Period>{car.rent.period}</Period>
+          <Price>{car.rent.price}</Price>
         </Rent>
       </Details>
       <AcessoryList>
-          <Acessory name="380KM/h" icon={speedSvg} />
-          <Acessory name="3.2s" icon={accelerationSvg} />
-          <Acessory name="800 HP" icon={forceSvg } />
-          <Acessory name="Gaolina" icon={gasolineSvg} />
-          <Acessory name="Auto" icon={exchangeSvg} />
-          <Acessory name="2 Pessoas" icon={peopleSvg} />
+        { car.accessories.map( item =>(
+
+           <Acessory
+             key={item.type}
+             name={item.name}
+             icon={getAcessorys(item.type)}
+            />
+          ))
+        }
+
+
       </AcessoryList>
         <About>
-          tyyuayugsyu syukkkkkk kkkkk  bsubsu,
-          njanisnnisnsinisnsi kkkkk kkk nsinsin,
-          ininininini
+        {car.about}
         </About>
      </Content>
      <Footer>
-         <Button title="Confirmar" />
+         <Button title="Confirmar" onPress={HandleCarDetalhes} />
      </Footer>
 
     </Container>
