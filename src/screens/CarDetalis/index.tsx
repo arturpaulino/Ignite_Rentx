@@ -30,7 +30,7 @@ export function CarDetalis() {
 
 
   function HandleCarDetalhes() {
-    navigation.navigate('Scheduling')
+    navigation.navigate('Scheduling', { car })
   }
 
   function HandleBack(){

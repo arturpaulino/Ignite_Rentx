@@ -1,4 +1,5 @@
-import React from "react";
+import React, {useState , useEffect} from "react";
+import {Alert} from "react-native"
 import {Container , Header, CarImages , Content, Details , Description ,Period, Brand , Name , Rent,Price, About ,  AcessoryList,Footer,
   RentalPeriod,
   CalendarIcon,
@@ -25,33 +26,90 @@ import peopleSvg from "../../assets/people.svg";
 import { RFValue } from 'react-native-responsive-fontsize';
 import { useTheme } from "styled-components";
 import { Feather} from  "@expo/vector-icons";
-import { useNavigation } from "@react-navigation/core";
-export function SchedulingDetalis() {
-  const theme = useTheme();
-  const navigation = useNavigation()
+import { useNavigation , useRoute } from "@react-navigation/core";
+import { carDTO } from "../../dtos/carDTO";
+import {format} from "date-fns"
+import { GetPlatformDate} from "../../Utils/GetPlatformDate";
+import  api from "../../service/api";
 
-  function HandleCarDetalhes() {
-    navigation.navigate('SchedulingComplete')
+interface Params {
+  car: carDTO;
+  dates: string[];
+}
+interface rentalPeriodoI{
+  start: string;
+  end: string;
+}
+
+export function SchedulingDetalis() {
+  const navigation = useNavigation()
+  const route = useRoute();
+  const { car, dates } = route.params as Params;
+
+  const [rentalPeriodo, serentalPeriodo ] = useState<rentalPeriodoI>({} as rentalPeriodoI )
+  const renTotal = Number( dates.length * car.rent.price);
+  const theme = useTheme();
+
+
+  async function HandleCarDetalhes() {
+    const agendamentosCar = await api.get(`/schedules_bycars/${car.id}`);
+
+    const unavailable_dates =[
+      ...agendamentosCar.data.unavailable_dates,
+      ...dates
+    ]
+
+    const response2 = await api.put(`/schedules_byuser/${car.id}`,{
+      id: 1,
+      car ,
+    })
+
+
+     const response = await api.put(`/schedules_bycars/${car.id}`,
+    {
+      id: car.id,
+      unavailable_dates
+
+    })
+    .then( reponse =>  navigation.navigate('SchedulingComplete' ))
+    .catch( ()=> Alert.alert("Não possivel confirma o agendamento"))
+
+
+
+
   }
+  function HandleBack(){
+    navigation.goBack();
+  }
+
+
+
+
+  useEffect(() => {
+    serentalPeriodo({
+      start: format( GetPlatformDate( new Date(dates[0]) ),'dd/MM/yyyy'),
+      end:   format( GetPlatformDate( new Date(dates[dates.length - 1]) ),'dd/MM/yyyy'),
+    })
+  }, [])
 
   return (
     <Container>
       <Header>
-        <BackButton  onPress={ ()=>{}}/>
+        <BackButton  onPress={HandleBack}/>
       </Header>
       <CarImages>
-       <ImageSlider imageURl={['https://logodownload.org/wp-content/uploads/2016/11/audi-logo.png']}/>
+       <ImageSlider imageURl={car.photos}/>
       </CarImages>
 
     <Content>
       <Details>
         <Description>
-            <Brand>Teste</Brand>
-            <Name>Teste name</Name>
+            <Brand>{car.brand}</Brand>
+            <Name>{car.name}</Name>
         </Description>
         <Rent>
-          <Period>Ao dia</Period>
-          <Price>R$ 60</Price>
+          <Period>{car.rent.period}</Period>
+          <Price>{car.rent.price}</Price>
         </Rent>
       </Details>
       <AcessoryList>
@@ -73,7 +131,7 @@ export function SchedulingDetalis() {
 
           <DateInfo>
             <DateTitle>DE</DateTitle>
-            <DateValue>16/06/2021</DateValue>
+            <DateValue>{rentalPeriodo.start}</DateValue>
           </DateInfo>
           <Feather
               name="chevron-right"
@@ -82,15 +140,15 @@ export function SchedulingDetalis() {
             />
           <DateInfo>
             <DateTitle>ATÉ</DateTitle>
-            <DateValue>18/06/2021</DateValue>
+            <DateValue>{rentalPeriodo.end}</DateValue>
           </DateInfo>
       </RentalPeriod>
 
       <RentalPrice>
         <RentalPriceLabel>TOTAL</RentalPriceLabel>
         <RenatalPriceDetails>
-            <RenatlPriceQuote>R% 580x 3</RenatlPriceQuote>
-            <RentalPriceTotal>R$ 2.900</RentalPriceTotal>
+            <RenatlPriceQuote>{`R$ ${car.rent.price} x ${dates.length} `}</RenatlPriceQuote>
+            <RentalPriceTotal>{renTotal}</RentalPriceTotal>
         </RenatalPriceDetails>
       </RentalPrice>
      </Content>
